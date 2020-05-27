@@ -6,6 +6,15 @@ To open the frontend implementation go to: [https://github.com/vieraruben/airbnb
 
 [https://master.d2nhhpue3pv3dc.amplifyapp.com/](https://master.d2nhhpue3pv3dc.amplifyapp.com/)
 
+### Technologies
+
+Serverless Framework <br />
+AWS Lambda <br />
+S3 <br />
+DynamoDB <br />
+Cognito <br />
+AWS Amplify <br />
+
 ### Use cases
 
 Search by location <br />
