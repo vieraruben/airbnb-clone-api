@@ -1,0 +1,137 @@
+service: airbnb-clone-api
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle # Package our functions with Webpack
+  # - serverless-offline
+  - serverless-dotenv-plugin # Load .env as environment variables
+
+custom:
+  # Our stage is based on what is passed in when running serverless
+  # commands. Or fallsback to what we have set in the provider section.
+  stage: ${opt:stage, self:provider.stage}
+  # Set the table name here so we can use it while testing locally
+  tableName: ${self:custom.stage}-properties
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-2
+
+  # These environment variables are made available to our functions
+  # under process.env.
+  environment:
+    tableName: ${self:custom.tableName}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      # Resource:
+      #   - "Fn::GetAtt": [ PropertiesTable, Arn ]
+      Resource: "*"
+
+functions:
+  list:
+    handler: handler.searchByLocation
+    events:
+      - http:
+          path: api/search
+          method: get
+          cors: true
+          authorizer: aws_iam
+  get:
+    handler: handler.getProperty
+    events:
+      - http:
+          path: api/property
+          method: get
+          cors: true
+          authorizer: aws_iam
+
+  getPropertiesByOwner:
+    handler: handler.getPropertiesByOwner
+    events:
+      - http:
+          path: api/properties
+          method: get
+          cors: true
+          authorizer: aws_iam
+
+  addNewProperty:
+    handler: handler.addNewProperty
+    events:
+      - http:
+          path: api/property
+          method: put
+          cors: true
+          authorizer: aws_iam
+
+          
+  bookProperty:
+    handler: handler.bookProperty
+    events:
+      - http:
+          path: api/book
+          method: put
+          cors: true
+          authorizer: aws_iam
+            
+  getBookedDatesProperty:
+    handler: handler.getBookedDatesProperty
+    events:
+      - http:
+          path: api/propertyDates
+          method: get
+          cors: true
+          authorizer: aws_iam
+
+  getBookedPropertiesForUsers:
+    handler: handler.getBookedPropertiesForUsers
+    events:
+      - http:
+          path: api/propertyUser
+          method: get
+          cors: true
+          authorizer: aws_iam
+
+  deleteBookedProperty:
+    handler: handler.deleteBookedProperty
+    events:
+      - http:
+          path: api/book
+          method: delete
+          cors: true
+          authorizer: aws_iam
+          
+  deleteProperty:
+    # - path: url path is /api/property/{id}
+    handler: handler.deleteProperty
+    events:
+      - http:
+          path: api/property
+          method: delete
+          cors: true
+          authorizer: aws_iam
+
+# Create our resources with separate CloudFormation templates
+resources:
+  # API Gateway Errors
+  - ${file(resources/api-gateway-errors.yml)}
+  # DynamoDB
+  - ${file(resources/dynamodb-table.yml)}
+  # S3
+  - ${file(resources/s3-bucket.yml)}
+  # Cognito
+  - ${file(resources/cognito-user-pool.yml)}
+  - ${file(resources/cognito-identity-pool.yml)}

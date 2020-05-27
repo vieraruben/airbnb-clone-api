@@ -1,0 +1,60 @@
+Resources:
+  PropertiesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.tableName}
+      AttributeDefinitions:
+        - AttributeName: propertyId
+          AttributeType: S
+        - AttributeName: sortKey
+          AttributeType: S
+        - AttributeName: country_city
+          AttributeType: S
+        - AttributeName: ownerId
+          AttributeType: S
+        - AttributeName: startBookingDate
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: propertyId
+          KeyType: HASH
+        - AttributeName: sortKey
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      GlobalSecondaryIndexes:
+        - IndexName: SearchByLocation
+          KeySchema:
+            - AttributeName: country_city
+              KeyType: HASH
+            - AttributeName: propertyId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: SearchByOwner
+          KeySchema:
+            - AttributeName: ownerId
+              KeyType: HASH
+            - AttributeName: propertyId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: SearchByUser
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: startBookingDate
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
