@@ -1,6 +1,6 @@
 ## Airbnb-Clone-Api
 
-To open the frontend implementation go to: [https://github.com/vieraruben/airbnb-clone-client](https://github.com/vieraruben/airbnb-clone-client)
+To open the client implementation go to: [https://github.com/vieraruben/airbnb-clone-client](https://github.com/vieraruben/airbnb-clone-client)
 
 ## Demo
 
